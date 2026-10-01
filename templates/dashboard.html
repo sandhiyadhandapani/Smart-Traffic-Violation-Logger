@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | TRAFFIC PULSE{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="eyebrow">Operations Overview</p>
+        <h2>Dashboard</h2>
+    </div>
+    <div class="header-actions">
+        <a href="{{ url_for('violations.add_violation') }}" class="btn btn-primary">Add Violation</a>
+        <a href="{{ url_for('violations.history') }}" class="btn btn-secondary">View History</a>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Violations</div>
+        <div class="stat-value">{{ total_violations or 0 }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Unpaid Fines</div>
+        <div class="stat-value">{{ unpaid_violations or 0 }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Paid Fines</div>
+        <div class="stat-value">{{ paid_violations or 0 }}</div>
+    </div>
+    <div class="stat-card accent-card">
+        <div class="stat-label">Total Fine Amount</div>
+        <div class="stat-value">₹{{ '%.2f' % (total_fine_amount or 0) }}</div>
+    </div>
+</div>
+
+<div class="panel mt-4">
+    <div class="panel-header">
+        <h3>Recent Violations</h3>
+    </div>
+
+    {% set recent_violations = violations or [] %}
+    {% if recent_violations %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Vehicle</th>
+                    <th>Violation</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Fine</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for violation in recent_violations[:5] %}
+                <tr>
+                    <td>{{ violation.vehicle_number }}</td>
+                    <td>{{ violation.violation_type }}</td>
+                    <td>{{ violation.location }}</td>
+                    <td>{{ violation.date }}</td>
+                    <td>₹{{ '%.2f' % violation.fine_amount }}</td>
+                    <td>
+                        <span class="status-badge {% if violation.payment_status == 'Paid' %}paid{% else %}unpaid{% endif %}">
+                            {{ violation.payment_status }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('violations.view_violation', violation_id=violation.id) }}" class="btn btn-link-small">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h4>No violations recorded yet</h4>
+        <p>Begin by adding the first traffic violation entry from the dashboard.</p>
+        <a href="{{ url_for('violations.add_violation') }}" class="btn btn-primary">Add First Violation</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

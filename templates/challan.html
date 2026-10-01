@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Challan | TRAFFIC PULSE{% endblock %}
+
+{% block content %}
+<div class="challan-page">
+    <div class="challan-card">
+        <div class="challan-header">
+            <div>
+                <p class="eyebrow">Traffic Enforcement Record</p>
+                <h2>TRAFFIC PULSE</h2>
+                <small>Smart Traffic Violation Logger</small>
+            </div>
+            <div class="challan-seal">CHALLAN</div>
+        </div>
+
+        <div class="challan-body">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="detail-row">
+                        <span class="detail-label">Challan ID</span>
+                        <strong>#{{ violation.id }}</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Vehicle Number</span>
+                        <strong>{{ violation.vehicle_number }}</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Violation Type</span>
+                        <strong>{{ violation.violation_type }}</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Location</span>
+                        <strong>{{ violation.location }}</strong>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="detail-row">
+                        <span class="detail-label">Date</span>
+                        <strong>{{ violation.date }}</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Fine Amount</span>
+                        <strong>₹{{ '%.2f' % violation.fine_amount }}</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Payment Status</span>
+                        <strong>
+                            <span class="status-badge {% if violation.payment_status == 'Paid' %}paid{% else %}unpaid{% endif %}">
+                                {{ violation.payment_status }}
+                            </span>
+                        </strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="qr-section">
+            <div class="qr-box">
+                <span class="qr-title">Scan the QR code to check challan status</span>
+                {% if qr_image_path %}
+                    <img src="{{ url_for('static', filename=qr_image_path) }}" alt="Challan QR Code" class="qr-image">
+                {% else %}
+                    <div class="qr-placeholder">QR unavailable</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="challan-actions">
+            <button type="button" class="btn btn-primary" onclick="window.print()">Print Challan</button>
+            <a href="{{ url_for('violations.history') }}" class="btn btn-secondary">Back to History</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

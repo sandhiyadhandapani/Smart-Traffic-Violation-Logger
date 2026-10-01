@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TRAFFIC PULSE{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand-block">
+                <div class="brand-mark">TP</div>
+                <div>
+                    <div class="brand-title">TRAFFIC PULSE</div>
+                    <div class="brand-subtitle">Smart Traffic Violation Logger</div>
+                </div>
+            </div>
+
+            {% if session.get('officer_logged_in') %}
+            <nav class="side-nav">
+                <a href="{{ url_for('dashboard.dashboard_home') }}" class="nav-link {% if request.endpoint == 'dashboard.dashboard_home' %}active{% endif %}">
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('violations.add_violation') }}" class="nav-link {% if request.endpoint == 'violations.add_violation' %}active{% endif %}">
+                    <span>Add Violation</span>
+                </a>
+                <a href="{{ url_for('violations.history') }}" class="nav-link {% if request.endpoint == 'violations.history' %}active{% endif %}">
+                    <span>Violation History</span>
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="nav-link logout-link">
+                    <span>Logout</span>
+                </a>
+            </nav>
+            {% endif %}
+        </aside>
+
+        <main class="main-panel">
+            <header class="topbar">
+                <button class="nav-toggle" type="button" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                {% if session.get('officer_logged_in') %}
+                <div class="topbar-user">
+                    <span class="user-label">Officer</span>
+                    <strong>{{ session.get('officer_username', 'Officer') }}</strong>
+                </div>
+                {% endif %}
+            </header>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show flash-alert" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+
+            <div class="content-wrap">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <footer class="app-footer">
+        <div>© 2026 TRAFFIC PULSE</div>
+        <div>Smart Traffic Violation Logger</div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Violation | TRAFFIC PULSE{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="eyebrow">Incident Logging</p>
+        <h2>Add Violation</h2>
+    </div>
+    <a href="{{ url_for('violations.history') }}" class="btn btn-secondary">Back to History</a>
+</div>
+
+<div class="panel form-panel">
+    <form method="POST" action="{{ url_for('violations.add_violation') }}" class="styled-form">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="vehicle_number" class="form-label">Vehicle Number</label>
+                <input type="text" class="form-control" id="vehicle_number" name="vehicle_number" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="violation_type" class="form-label">Violation Type</label>
+                <select class="form-select" id="violation_type" name="violation_type" required>
+                    <option value="">Select violation</option>
+                    <option value="No Helmet">No Helmet</option>
+                    <option value="Overspeeding">Overspeeding</option>
+                    <option value="Signal Violation">Signal Violation</option>
+                    <option value="No Seat Belt">No Seat Belt</option>
+                    <option value="Wrong Parking">Wrong Parking</option>
+                    <option value="Using Mobile While Driving">Using Mobile While Driving</option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label for="location" class="form-label">Location</label>
+                <input type="text" class="form-control" id="location" name="location" placeholder="e.g. MG Road Junction" required>
+            </div>
+
+            <div class="col-md-3">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="date" name="date" required>
+            </div>
+
+            <div class="col-md-3">
+                <label for="fine_amount" class="form-label">Fine Amount</label>
+                <input type="number" step="0.01" min="0" class="form-control" id="fine_amount" name="fine_amount" placeholder="500" required>
+            </div>
+        </div>
+
+        <div class="form-actions mt-4">
+            <button type="submit" class="btn btn-primary">Save Violation</button>
+            <a href="{{ url_for('dashboard.dashboard_home') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

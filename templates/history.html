@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Violation History | TRAFFIC PULSE{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="eyebrow">Records</p>
+        <h2>Violation History</h2>
+    </div>
+    <a href="{{ url_for('violations.add_violation') }}" class="btn btn-primary">Add Violation</a>
+</div>
+
+<div class="panel filter-panel">
+    <form method="GET" action="{{ url_for('violations.history') }}" class="filter-form">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="vehicle_number" class="form-label">Vehicle Number</label>
+                <input type="text" class="form-control" id="vehicle_number" name="vehicle_number" value="{{ vehicle_number or '' }}">
+            </div>
+            <div class="col-md-3">
+                <label for="violation_type" class="form-label">Violation Type</label>
+                <input type="text" class="form-control" id="violation_type" name="violation_type" value="{{ violation_type or '' }}">
+            </div>
+            <div class="col-md-2">
+                <label for="payment_status" class="form-label">Payment</label>
+                <select class="form-select" id="payment_status" name="payment_status">
+                    <option value="">All</option>
+                    <option value="Unpaid" {% if payment_status == 'Unpaid' %}selected{% endif %}>Unpaid</option>
+                    <option value="Paid" {% if payment_status == 'Paid' %}selected{% endif %}>Paid</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="date" name="date" value="{{ date_value or '' }}">
+            </div>
+            <div class="col-md-2 filter-actions">
+                <button type="submit" class="btn btn-primary">Search</button>
+                <a href="{{ url_for('violations.history') }}" class="btn btn-secondary">Clear</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="panel mt-4">
+    {% if violations %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Challan ID</th>
+                    <th>Vehicle Number</th>
+                    <th>Violation</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Fine</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for violation in violations %}
+                <tr>
+                    <td>#{{ violation.id }}</td>
+                    <td>{{ violation.vehicle_number }}</td>
+                    <td>{{ violation.violation_type }}</td>
+                    <td>{{ violation.location }}</td>
+                    <td>{{ violation.date }}</td>
+                    <td>₹{{ '%.2f' % violation.fine_amount }}</td>
+                    <td>
+                        <span class="status-badge {% if violation.payment_status == 'Paid' %}paid{% else %}unpaid{% endif %}">
+                            {{ violation.payment_status }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="{{ url_for('violations.view_violation', violation_id=violation.id) }}" class="btn btn-link-small">View</a>
+                            {% if violation.payment_status != 'Paid' %}
+                            <form method="POST" action="{{ url_for('violations.mark_paid', violation_id=violation.id) }}">
+                                <button type="submit" class="btn btn-link-small success-link">Mark as Paid</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h4>No matching violations</h4>
+        <p>Adjust the filters or add a new violation record.</p>
+        <a href="{{ url_for('violations.add_violation') }}" class="btn btn-primary">Add New Violation</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

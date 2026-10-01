@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Violation Status | TRAFFIC PULSE{% endblock %}
+
+{% block content %}
+<div class="public-status-page">
+    <div class="status-card">
+        <div class="status-header text-center">
+            <div class="brand-mark large">TP</div>
+            <h1>TRAFFIC PULSE</h1>
+            <p>Violation Status</p>
+        </div>
+
+        {% if violation %}
+        <div class="status-body">
+            <div class="detail-row">
+                <span class="detail-label">Challan ID</span>
+                <strong>#{{ violation.id }}</strong>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Vehicle Number</span>
+                <strong>{{ violation.vehicle_number }}</strong>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Violation Type</span>
+                <strong>{{ violation.violation_type }}</strong>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Location</span>
+                <strong>{{ violation.location }}</strong>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Date</span>
+                <strong>{{ violation.date }}</strong>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Fine Amount</span>
+                <strong>₹{{ '%.2f' % violation.fine_amount }}</strong>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Payment Status</span>
+                <strong>
+                    <span class="status-badge {% if violation.payment_status == 'Paid' %}paid{% else %}unpaid{% endif %}">
+                        {{ violation.payment_status }}
+                    </span>
+                </strong>
+            </div>
+        </div>
+
+        {% if qr_image_path %}
+        <div class="qr-section public-qr-section">
+            <div class="qr-box">
+                <span class="qr-title">Challan QR</span>
+                <img src="{{ url_for('static', filename=qr_image_path) }}" alt="Violation QR Code" class="qr-image">
+            </div>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="empty-state public-empty-state">
+            <h4>Violation not found</h4>
+            <p>The requested challan could not be located.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
